@@ -12,16 +12,170 @@ import CoreData
 
 class CoreDataManager{
     
+    enum TransactionType {
+        case Write
+        case Read
+        case None
+    }
+    
+    
+    class CoreDataOperation: NSBlockOperation{
+        
+        var type: TransactionType = .None
+        var identifier: String = ""
+        
+        
+    }
+    
     
     static let sharedInstance = CoreDataManager()
     
+    
+    var mainThreadContext: NSManagedObjectContext?
+    
+    
+    lazy private var coreDataQueue: NSOperationQueue = {
+        
+        let queue = NSOperationQueue()
+        queue.maxConcurrentOperationCount = 5
+        return queue
+        
+    }()
+    
+    // MARK: Lifecycle
     
     init(){
         
         print("CoreDataManager initializing")
         
+        let managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
+        mainThreadContext = managedObjectContext
+       
+    }
+    
+    // MARK: Public
+    
+    
+    func coordinateReading(identifier identifier: String, block: (NSManagedObjectContext) -> Void){
+        
+        serializeTransaction(type: .Read, identifier: identifier, block: block)
+        
+    }
+    
+    
+    func coordinateWriting(identifier identifier: String, block: (NSManagedObjectContext) -> Void){
+        
+         serializeTransaction(type: .Write, identifier: identifier, block: block)
+        
+    }
+    
+    
+    // MARK: Private
+    
+    private func serializeTransaction (type type: TransactionType, identifier: String, block: (NSManagedObjectContext) -> Void){
         
         
+        let incoming = CoreDataOperation { [unowned self] in
+            
+            
+            // Get a background context for the calling thread
+            let context = self.backgroundContext()
+            
+            
+            // This is additional safety, enqueue the block on the context's internal queue (could be redundent)
+            context.performBlockAndWait{[unowned context] in
+                
+                // execute the block with the context as param
+                block(context)
+                
+                
+                // Attempt to save
+                do{
+                    try context.save()
+                    
+                    /*
+                     
+                     This will pass on the changes to the parent context (main thread context), but we still need to save the main thread context to persist the changes to the DB
+                     
+                     */
+                    
+                    let parentContext = context.parentContext!
+                    
+                    context.parentContext?.performBlockAndWait{ [unowned parentContext] in
+                        
+                        do{
+                            try parentContext.save()
+                            
+                            
+                        } catch {
+                            
+                            print("Error saving parent context for operation with identifier: \(identifier) and error: \(error)")
+                            
+                        }
+                    }
+                }
+                catch{
+                    
+                    print("Error saving background context for operation with identifier: \(identifier) and error: \(error)")
+                    
+                }
+            }
+        }
+        
+        
+        incoming.type = type;
+        incoming.identifier = identifier
+        
+        /*
+         Now lets enforce the dependencies. Read Operations must be serialized with Writes, Writes must be serialized with reads and Writes
+         */
+        synced(self) { // Using a lock here because it is critical that no two incoming threads be evaluating the contents of the queue concurrently (basically serializing access to the queue)
+            
+            
+            for item in self.coreDataQueue.operations  {
+                
+                let queued = item as! CoreDataOperation
+                
+               
+                if incoming.type == .Write {
+                    
+                    incoming.addDependency(queued)
+                    
+                } else {
+                    
+                    if queued.type == .Write {
+                    
+                        incoming.addDependency(queued)
+                    }
+                    
+                }
+            }
+            
+            
+            // Queue the operation
+            
+            self.coreDataQueue.addOperation(incoming)
+            
+        }
+        
+        
+    }
+    
+    
+    private func backgroundContext() -> NSManagedObjectContext{
+        
+        let context = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+        context.parentContext = mainThreadContext
+        return context
+        
+    }
+    
+    func synced(lock: AnyObject, closure: () -> ()) {
+        
+        defer { objc_sync_exit(lock) }
+        objc_sync_enter(lock)
+        closure()
     }
     
     
@@ -29,14 +183,14 @@ class CoreDataManager{
     // MARK: Boilerplate
     
     lazy var applicationDocumentsDirectory: NSURL = {
-        // The directory the application uses to store the Core Data store file. This code uses a directory named "com.Thesee.CoreDataSample" in the application's documents Application Support directory.
+
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
         return urls[urls.count-1]
     }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("CoreDataSample", withExtension: "momd")!
+        let modelURL = NSBundle.mainBundle().URLForResource("Model", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
     }()
     
@@ -64,14 +218,7 @@ class CoreDataManager{
         
         return coordinator
     }()
-    
-    lazy var managedObjectContext: NSManagedObjectContext = {
-        // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
-        let coordinator = self.persistentStoreCoordinator
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-        managedObjectContext.persistentStoreCoordinator = coordinator
-        return managedObjectContext
-    }()
+
     
 
     

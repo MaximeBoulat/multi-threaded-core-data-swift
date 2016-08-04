@@ -15,6 +15,9 @@
 		509BA2131D52B8AE007A860C /* MasterTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2121D52B8AE007A860C /* MasterTableVC.swift */; };
 		509BA2151D52B9E8007A860C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509BA2141D52B9E8007A860C /* CoreData.framework */; };
 		509BA2171D52BCF7007A860C /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2161D52BCF7007A860C /* CoreDataManager.swift */; };
+		509BA2491D52CC7E007A860C /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2471D52CC7E007A860C /* Model.xcdatamodeld */; };
+		509BA2581D52CE0A007A860C /* Game+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2561D52CE0A007A860C /* Game+CoreDataProperties.swift */; };
+		509BA2591D52CE0A007A860C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2571D52CE0A007A860C /* Game.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +43,10 @@
 		509BA2121D52B8AE007A860C /* MasterTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableVC.swift; sourceTree = "<group>"; };
 		509BA2141D52B9E8007A860C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		509BA2161D52BCF7007A860C /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		509BA2481D52CC7E007A860C /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		509BA24B1D52CD21007A860C /* SwiftCoreDataEngine-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftCoreDataEngine-Bridging-Header.h"; sourceTree = "<group>"; };
+		509BA2561D52CE0A007A860C /* Game+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		509BA2571D52CE0A007A860C /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,10 +71,13 @@
 		509BA1E61D52B7B0007A860C = {
 			isa = PBXGroup;
 			children = (
+				509BA2561D52CE0A007A860C /* Game+CoreDataProperties.swift */,
+				509BA2571D52CE0A007A860C /* Game.swift */,
 				509BA2141D52B9E8007A860C /* CoreData.framework */,
 				509BA1F11D52B7B0007A860C /* SwiftCoreDataEngine */,
 				509BA2061D52B7B2007A860C /* SwiftCoreDataEngineTests */,
 				509BA1F01D52B7B0007A860C /* Products */,
+				509BA24B1D52CD21007A860C /* SwiftCoreDataEngine-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -84,9 +94,9 @@
 			isa = PBXGroup;
 			children = (
 				509BA1F21D52B7B1007A860C /* AppDelegate.swift */,
-				509BA1F61D52B7B1007A860C /* Main.storyboard */,
 				509BA2121D52B8AE007A860C /* MasterTableVC.swift */,
-				509BA2161D52BCF7007A860C /* CoreDataManager.swift */,
+				509BA1F61D52B7B1007A860C /* Main.storyboard */,
+				509BA24A1D52CCD4007A860C /* Core Data */,
 				509BA1F91D52B7B1007A860C /* Assets.xcassets */,
 				509BA1FB1D52B7B1007A860C /* LaunchScreen.storyboard */,
 				509BA1FE1D52B7B1007A860C /* Info.plist */,
@@ -101,6 +111,15 @@
 				509BA2091D52B7B2007A860C /* Info.plist */,
 			);
 			path = SwiftCoreDataEngineTests;
+			sourceTree = "<group>";
+		};
+		509BA24A1D52CCD4007A860C /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				509BA2161D52BCF7007A860C /* CoreDataManager.swift */,
+				509BA2471D52CC7E007A860C /* Model.xcdatamodeld */,
+			);
+			name = "Core Data";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,8 +224,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				509BA1F31D52B7B1007A860C /* AppDelegate.swift in Sources */,
+				509BA2591D52CE0A007A860C /* Game.swift in Sources */,
 				509BA2171D52BCF7007A860C /* CoreDataManager.swift in Sources */,
 				509BA2131D52B8AE007A860C /* MasterTableVC.swift in Sources */,
+				509BA2491D52CC7E007A860C /* Model.xcdatamodeld in Sources */,
+				509BA2581D52CE0A007A860C /* Game+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,10 +359,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = SwiftCoreDataEngine/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Thesee.SwiftCoreDataEngine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SwiftCoreDataEngine-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -348,10 +373,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = SwiftCoreDataEngine/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Thesee.SwiftCoreDataEngine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SwiftCoreDataEngine-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -408,6 +435,19 @@
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		509BA2471D52CC7E007A860C /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				509BA2481D52CC7E007A860C /* Model.xcdatamodel */,
+			);
+			currentVersion = 509BA2481D52CC7E007A860C /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 509BA1E71D52B7B0007A860C /* Project object */;
 }

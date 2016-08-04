@@ -16,13 +16,13 @@ class MasterTableVC: UITableViewController {
     let games: NSFetchedResultsController
     
     
+    // MARK: Lifecycle
+    
+    
     
     required init?(coder aDecoder: NSCoder) {
         
-        
         games = NSFetchedResultsController()
-        
-        
         
         super.init(coder: aDecoder)
         
@@ -31,6 +31,17 @@ class MasterTableVC: UITableViewController {
     }
     
     
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        
+        
+        
+        
+        
+    }
+    
+    // MARK: Tableview
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
