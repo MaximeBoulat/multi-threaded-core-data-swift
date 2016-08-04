@@ -130,9 +130,6 @@ class CoreDataManager{
                 
                 let request = NSFetchRequest(entityName: "Game")
                 let results = try! context.executeFetchRequest(request)
-                
-           
-                
                 let index = Int(arc4random_uniform(UInt32(results.count)))
                 
                 
@@ -185,7 +182,7 @@ class CoreDataManager{
             }
             
             while stressQueue.operationCount > coreDataQueue.maxConcurrentOperationCount {
-                NSThread.sleepForTimeInterval(2)
+                NSThread.sleepForTimeInterval(0.5)
             }
             
         }
@@ -204,7 +201,7 @@ class CoreDataManager{
         let incoming = CoreDataOperation { [unowned self] in
             
             
-//            print("Operation of type: \(type.rawValue) with identifier: \(identifier) starting!!!")
+            print("Operation of type: \(type.rawValue) with identifier: \(identifier) starting!!!")
             
             // Get a background context for the calling thread
             let context = self.backgroundContext()
@@ -251,7 +248,7 @@ class CoreDataManager{
                 }
             }
             
-//            print("Operation of type: \(type.rawValue) with identifier: \(identifier) ending!!!")
+            print("Operation of type: \(type.rawValue) with identifier: \(identifier) ending!!!")
         }
         
         
@@ -259,7 +256,7 @@ class CoreDataManager{
         incoming.identifier = identifier
         
         /*
-         Now lets enforce the dependencies. Read Operations must be serialized with Writes, Writes must be serialized with reads and Writes
+         Now lets enforce the dependencies. Read Operations must be serialized with Writes, Writes must be serialized with Reads and Writes
          */
         synced(self) { // Using a lock here because it is critical that no two incoming threads be evaluating the contents of the queue concurrently (basically serializing access to the queue)
             
