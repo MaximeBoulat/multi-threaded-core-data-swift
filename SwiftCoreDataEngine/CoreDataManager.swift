@@ -12,26 +12,9 @@ import CoreData
 
 class CoreDataManager{
     
-    enum TransactionType: String {
-        case Write = "WRITE"
-        case Read = "READ"
-        case None = "NONE"
-    }
-    
-    
-    class CoreDataOperation: NSBlockOperation{
-        
-        var type: TransactionType = .None
-        var identifier: String = ""
-        
-        
-    }
-    
-    
     static let sharedInstance = CoreDataManager()
-    
-    
     var mainThreadContext: NSManagedObjectContext?
+    var stressing = false
     
     
     lazy private var coreDataQueue: NSOperationQueue = {
@@ -49,6 +32,21 @@ class CoreDataManager{
         return queue
         
     }()
+    
+    enum TransactionType: String {
+        case Write = "WRITE"
+        case Read = "READ"
+        case None = "NONE"
+    }
+    
+    
+    class CoreDataOperation: NSBlockOperation{
+        
+        var type: TransactionType = .None
+        var identifier: String = ""
+        
+        
+    }
     
     // MARK: Lifecycle
     
@@ -86,7 +84,7 @@ class CoreDataManager{
             case Read = 0
             case Write
             case Delete
- 
+            
         }
         
         
@@ -100,7 +98,7 @@ class CoreDataManager{
                 for item in games {
                     
                     let game = item as! Game
-                     _ = game.name
+                    _ = game.name
                     
                 }
                 
@@ -144,9 +142,9 @@ class CoreDataManager{
             
         }
         
-        while true {
+        while stressing {
             
-            let operation = NSBlockOperation(block: { 
+            let operation = NSBlockOperation(block: {
                 
                 let operationType = OperationType(rawValue: Int(arc4random_uniform(3)))
                 
@@ -166,12 +164,12 @@ class CoreDataManager{
                         
                     }
                     
-
+                    
                     
                 case .Delete:
                     
                     deleteBlock()
-   
+                    
                     
                 }
                 
@@ -188,10 +186,15 @@ class CoreDataManager{
         }
         
         
+        stressQueue.cancelAllOperations()
+        coreDataQueue.cancelAllOperations()
+        
+        
+        
         
         
     }
-    
+
     
     // MARK: Private
     

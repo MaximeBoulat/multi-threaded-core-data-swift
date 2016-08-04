@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		50981EE91D531B7D001EEF3B /* DetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50981EE81D531B7D001EEF3B /* DetailTableVC.swift */; };
+		50981EF41D531D8E001EEF3B /* Game+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50981EF01D531D8E001EEF3B /* Game+CoreDataProperties.swift */; };
+		50981EF51D531D8E001EEF3B /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50981EF11D531D8E001EEF3B /* Game.swift */; };
+		50981EF61D531D8E001EEF3B /* Player+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50981EF21D531D8E001EEF3B /* Player+CoreDataProperties.swift */; };
+		50981EF71D531D8E001EEF3B /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50981EF31D531D8E001EEF3B /* Player.swift */; };
 		509BA1F31D52B7B1007A860C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA1F21D52B7B1007A860C /* AppDelegate.swift */; };
 		509BA1F81D52B7B1007A860C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 509BA1F61D52B7B1007A860C /* Main.storyboard */; };
 		509BA1FA1D52B7B1007A860C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 509BA1F91D52B7B1007A860C /* Assets.xcassets */; };
@@ -16,8 +21,6 @@
 		509BA2151D52B9E8007A860C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 509BA2141D52B9E8007A860C /* CoreData.framework */; };
 		509BA2171D52BCF7007A860C /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2161D52BCF7007A860C /* CoreDataManager.swift */; };
 		509BA2491D52CC7E007A860C /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2471D52CC7E007A860C /* Model.xcdatamodeld */; };
-		509BA2581D52CE0A007A860C /* Game+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2561D52CE0A007A860C /* Game+CoreDataProperties.swift */; };
-		509BA2591D52CE0A007A860C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509BA2571D52CE0A007A860C /* Game.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +34,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		50981EE81D531B7D001EEF3B /* DetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailTableVC.swift; sourceTree = "<group>"; };
+		50981EF01D531D8E001EEF3B /* Game+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Game+CoreDataProperties.swift"; path = "../Game+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		50981EF11D531D8E001EEF3B /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Game.swift; path = ../Game.swift; sourceTree = "<group>"; };
+		50981EF21D531D8E001EEF3B /* Player+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Player+CoreDataProperties.swift"; path = "../Player+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		50981EF31D531D8E001EEF3B /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Player.swift; path = ../Player.swift; sourceTree = "<group>"; };
 		509BA1EF1D52B7B0007A860C /* SwiftCoreDataEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftCoreDataEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		509BA1F21D52B7B1007A860C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		509BA1F71D52B7B1007A860C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -45,8 +53,6 @@
 		509BA2161D52BCF7007A860C /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		509BA2481D52CC7E007A860C /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		509BA24B1D52CD21007A860C /* SwiftCoreDataEngine-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftCoreDataEngine-Bridging-Header.h"; sourceTree = "<group>"; };
-		509BA2561D52CE0A007A860C /* Game+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Game+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		509BA2571D52CE0A007A860C /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,8 +77,6 @@
 		509BA1E61D52B7B0007A860C = {
 			isa = PBXGroup;
 			children = (
-				509BA2561D52CE0A007A860C /* Game+CoreDataProperties.swift */,
-				509BA2571D52CE0A007A860C /* Game.swift */,
 				509BA2141D52B9E8007A860C /* CoreData.framework */,
 				509BA1F11D52B7B0007A860C /* SwiftCoreDataEngine */,
 				509BA2061D52B7B2007A860C /* SwiftCoreDataEngineTests */,
@@ -95,6 +99,7 @@
 			children = (
 				509BA1F21D52B7B1007A860C /* AppDelegate.swift */,
 				509BA2121D52B8AE007A860C /* MasterTableVC.swift */,
+				50981EE81D531B7D001EEF3B /* DetailTableVC.swift */,
 				509BA1F61D52B7B1007A860C /* Main.storyboard */,
 				509BA24A1D52CCD4007A860C /* Core Data */,
 				509BA1F91D52B7B1007A860C /* Assets.xcassets */,
@@ -116,6 +121,10 @@
 		509BA24A1D52CCD4007A860C /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
+				50981EF01D531D8E001EEF3B /* Game+CoreDataProperties.swift */,
+				50981EF11D531D8E001EEF3B /* Game.swift */,
+				50981EF21D531D8E001EEF3B /* Player+CoreDataProperties.swift */,
+				50981EF31D531D8E001EEF3B /* Player.swift */,
 				509BA2161D52BCF7007A860C /* CoreDataManager.swift */,
 				509BA2471D52CC7E007A860C /* Model.xcdatamodeld */,
 			);
@@ -224,11 +233,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				509BA1F31D52B7B1007A860C /* AppDelegate.swift in Sources */,
-				509BA2591D52CE0A007A860C /* Game.swift in Sources */,
 				509BA2171D52BCF7007A860C /* CoreDataManager.swift in Sources */,
+				50981EF61D531D8E001EEF3B /* Player+CoreDataProperties.swift in Sources */,
+				50981EF51D531D8E001EEF3B /* Game.swift in Sources */,
 				509BA2131D52B8AE007A860C /* MasterTableVC.swift in Sources */,
 				509BA2491D52CC7E007A860C /* Model.xcdatamodeld in Sources */,
-				509BA2581D52CE0A007A860C /* Game+CoreDataProperties.swift in Sources */,
+				50981EE91D531B7D001EEF3B /* DetailTableVC.swift in Sources */,
+				50981EF71D531D8E001EEF3B /* Player.swift in Sources */,
+				50981EF41D531D8E001EEF3B /* Game+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +437,7 @@
 				509BA20E1D52B7B2007A860C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		509BA20F1D52B7B2007A860C /* Build configuration list for PBXNativeTarget "SwiftCoreDataEngineTests" */ = {
 			isa = XCConfigurationList;
@@ -433,6 +446,7 @@
 				509BA2111D52B7B2007A860C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

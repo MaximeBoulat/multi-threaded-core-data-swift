@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
+class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, DetailVCProtocol {
     
     
     
@@ -42,9 +42,6 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(insertNewGame(_:)))
-        navigationItem.rightBarButtonItem = addButton
         title = "Games"
         
     }
@@ -93,46 +90,67 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
         }
     }
     
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let game = games.fetchedObjects![indexPath.row] as! Game
+        
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let detailNav = sb.instantiateViewControllerWithIdentifier("DetailNav") as! UINavigationController
+        let detailVC = detailNav.viewControllers[0] as! DetailTableVC
+        detailVC.game = game
+        detailVC.delegate = self
+        
+        splitViewController?.showDetailViewController(detailNav, sender: self)
+        
+        
+    }
+    
     
     // MARK: Actions
     
-    func insertNewGame(sender: AnyObject){
+    
+    @IBAction func didPressPlus(sender: AnyObject) {
         
-//        let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .Alert)
-//        let add = UIAlertAction(title: "Add", style: .Default) {(action) in
-//            
-//            CoreDataManager.sharedInstance.coordinateWriting(identifier: "InsertGame", block: { (context) in
-//                
-//                let input = alert.textFields![0].text
-//                
-//                if input != nil && !input!.isEmpty{
-//                    
-//                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
-//                    newGame.name = input
-//                    
-//                }
-//                
-//            })
-//            
-//        }
-//        
-//        let cancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
-//        
-//        alert.addAction(add)
-//        alert.addAction(cancel)
-//        alert.addTextFieldWithConfigurationHandler(nil)
-//        presentViewController(alert, animated: true, completion: nil)
         
+        let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .Alert)
+        let add = UIAlertAction(title: "Add", style: .Default) {(action) in
+            
+            CoreDataManager.sharedInstance.coordinateWriting(identifier: "InsertGame", block: { (context) in
+                
+                let input = alert.textFields![0].text
+                
+                if input != nil && !input!.isEmpty{
+                    
+                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
+                    newGame.name = input
+                    
+                }
+                
+            })
+            
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        
+        alert.addAction(add)
+        alert.addAction(cancel)
+        alert.addTextFieldWithConfigurationHandler(nil)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    @IBAction func didPressPlay(sender: AnyObject) {
+        
+        CoreDataManager.sharedInstance.stressing = !CoreDataManager.sharedInstance.stressing
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             
             CoreDataManager.sharedInstance.stressTest()
         }
         
-
-        
-        
     }
+  
     
     // MARK: FetchedResultsController protocol
     
@@ -178,5 +196,15 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
         
     }
 
+     // MARK: DetailVCProtocol protocol
+    
+    func dismissDetail (detail: DetailTableVC){
+        
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let emptyVC = sb.instantiateViewControllerWithIdentifier("EmptyVC")
+        splitViewController?.showDetailViewController(emptyVC, sender: self)
+        
+    }
+    
     
 }

@@ -3,12 +3,48 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
+        <!--Detail TableVC-->
+        <scene sceneID="snA-GG-SQA">
+            <objects>
+                <tableViewController id="gOr-Gb-hBW" customClass="DetailTableVC" customModule="SwiftCoreDataEngine" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="s1W-rt-XYl">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="zmB-7I-PHV">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zmB-7I-PHV" id="4Zj-d0-cAJ">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="gOr-Gb-hBW" id="ZtX-EX-Ew0"/>
+                            <outlet property="delegate" destination="gOr-Gb-hBW" id="NSj-gh-TmJ"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="wSe-5T-kSN">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="z9R-rY-IgS">
+                            <connections>
+                                <action selector="didPressAdd:" destination="gOr-Gb-hBW" id="hxr-Gm-Dq0"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tpw-24-n5H" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1047" y="1010"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="btt-fl-MF5">
             <objects>
-                <viewController id="Wuy-y4-SYc" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EmptyVC" id="Wuy-y4-SYc" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ODs-60-sg5"/>
                         <viewControllerLayoutGuide type="bottom" id="GdO-L3-WZQ"/>
@@ -16,7 +52,19 @@
                     <view key="view" contentMode="scaleToFill" id="0tv-UR-KhZ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a game" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M8M-au-yP1">
+                                <rect key="frame" x="246" y="290" width="109" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="M8M-au-yP1" firstAttribute="centerX" secondItem="0tv-UR-KhZ" secondAttribute="centerX" id="G6J-Bs-iQZ"/>
+                            <constraint firstItem="M8M-au-yP1" firstAttribute="centerY" secondItem="0tv-UR-KhZ" secondAttribute="centerY" id="air-r4-MiN"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RpM-0m-E7P" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -46,7 +94,20 @@
                             <outlet property="delegate" destination="ppY-nK-n5c" id="1AZ-5z-7nw"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="Hf7-RY-ayi"/>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="Hf7-RY-ayi">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="play" id="orN-kc-cuv">
+                                <connections>
+                                    <action selector="didPressPlay:" destination="ppY-nK-n5c" id="0IX-OH-JhA"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="add" id="V2N-zS-HIh">
+                                <connections>
+                                    <action selector="didPressPlus:" destination="ppY-nK-n5c" id="wke-j4-XP2"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="n86-rc-nuJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -80,6 +141,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2EH-dM-MgM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-272" y="-43"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="bhn-FM-R10">
+            <objects>
+                <navigationController storyboardIdentifier="DetailNav" automaticallyAdjustsScrollViewInsets="NO" id="0xa-jk-gWU" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="PfO-nl-dpT">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="gOr-Gb-hBW" kind="relationship" relationship="rootViewController" id="pmV-jm-nqM"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sK7-xX-aaA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="235" y="1010"/>
         </scene>
     </scenes>
 </document>
