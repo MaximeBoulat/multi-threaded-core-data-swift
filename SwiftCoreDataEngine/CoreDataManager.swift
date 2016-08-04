@@ -20,18 +20,11 @@ class CoreDataManager{
     lazy private var coreDataQueue: NSOperationQueue = {
         
         let queue = NSOperationQueue()
-        queue.maxConcurrentOperationCount = 5
-        return queue
-        
-    }()
-    
-    lazy private var stressQueue: NSOperationQueue = {
-        
-        let queue = NSOperationQueue()
         queue.maxConcurrentOperationCount = 20
         return queue
         
     }()
+    
     
     enum TransactionType: String {
         case Write = "WRITE"
@@ -144,49 +137,42 @@ class CoreDataManager{
         
         while stressing {
             
-            let operation = NSBlockOperation(block: {
+            
+            
+            switch OperationType(rawValue: Int(arc4random_uniform(3)))!{
                 
-                let operationType = OperationType(rawValue: Int(arc4random_uniform(3)))
+            case .Write:
+                writeBlock()
                 
+            case .Read:
                 
-                switch operationType!{
-                    
-                case .Write:
-                    writeBlock()
-                    
-                case .Read:
-                    
-                    for _ in 0...4 {
-                        
-                        
-                        readBlock()
-                        
-                        
-                    }
+                for _ in 0...4 {
                     
                     
-                    
-                case .Delete:
-                    
-                    deleteBlock()
+                    readBlock()
                     
                     
                 }
                 
-            })
-            
-            if stressQueue.operationCount < stressQueue.maxConcurrentOperationCount {
-                stressQueue.addOperation(operation)
+                
+                
+            case .Delete:
+                
+                deleteBlock()
+                
+                
+                
             }
             
-            while stressQueue.operationCount > coreDataQueue.maxConcurrentOperationCount {
-                NSThread.sleepForTimeInterval(0.5)
+            if coreDataQueue.operationCount > coreDataQueue.maxConcurrentOperationCount {
+                
+                NSThread.sleepForTimeInterval(0.1)
             }
+            
             
         }
         
-        
-        stressQueue.cancelAllOperations()
+            
         coreDataQueue.cancelAllOperations()
         
         
