@@ -9,12 +9,20 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
 
+    
+    // MARK: - Lifecycle
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        let splitViewController = self.window!.rootViewController as! UISplitViewController
+        
+        splitViewController.preferredDisplayMode = .AllVisible
+        splitViewController.delegate = self
+        
         
         CoreDataManager.sharedInstance
         
@@ -43,6 +51,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+    
+    // MARK: - Split view
+    
+    // for collapsing
+    
+    //    func primaryViewControllerForCollapsingSplitViewController(splitViewController: UISplitViewController) -> UIViewController? {
+    //
+    //        return splitViewController.viewControllers[0]
+    //
+    //    }
+    
+    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
+        
+        //Return false to stop collapsing - i.e. let the split view controller try and incorporate the secondary view controller’s content into the collapsed interface
+        //Return true to allow to collapse fully (do not try and incorporate detail in master)
+        
+        return true
+    }
+    
+    
+    
+    // for expanding
+    
+    //    func primaryViewControllerForExpandingSplitViewController(splitViewController: UISplitViewController) -> UIViewController? {
+    //
+    //        return splitViewController.viewControllers[0]
+    //    }
+    
+    
+    func splitViewController(splitViewController: UISplitViewController, separateSecondaryViewControllerFromPrimaryViewController primaryViewController: UIViewController) -> UIViewController? {
+        
+        return nil
+        
+    }
+
 
 
 }
