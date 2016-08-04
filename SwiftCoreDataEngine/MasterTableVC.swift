@@ -45,6 +45,7 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(insertNewGame(_:)))
         navigationItem.rightBarButtonItem = addButton
+        title = "Games"
         
     }
     
@@ -72,35 +73,63 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
         return .Delete
     }
     
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let game = games.fetchedObjects![indexPath.row]
+        let objectId = game.objectID
+        
+        CoreDataManager.sharedInstance.coordinateWriting(identifier: "GameDelete") { (context) in
+            
+            do{
+                
+                let corresponding = try context.existingObjectWithID(objectId) as! Game
+                context.deleteObject(corresponding)
+                
+            } catch {
+                
+                print("Could not find corresponding Game object")
+                
+            }
+        }
+    }
+    
     
     // MARK: Actions
     
     func insertNewGame(sender: AnyObject){
         
-        let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .Alert)
-        let add = UIAlertAction(title: "Add", style: .Default) {(action) in
+//        let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .Alert)
+//        let add = UIAlertAction(title: "Add", style: .Default) {(action) in
+//            
+//            CoreDataManager.sharedInstance.coordinateWriting(identifier: "InsertGame", block: { (context) in
+//                
+//                let input = alert.textFields![0].text
+//                
+//                if input != nil && !input!.isEmpty{
+//                    
+//                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
+//                    newGame.name = input
+//                    
+//                }
+//                
+//            })
+//            
+//        }
+//        
+//        let cancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+//        
+//        alert.addAction(add)
+//        alert.addAction(cancel)
+//        alert.addTextFieldWithConfigurationHandler(nil)
+//        presentViewController(alert, animated: true, completion: nil)
+        
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             
-            CoreDataManager.sharedInstance.coordinateWriting(identifier: "InsertGame", block: { (context) in
-                
-                let input = alert.textFields![0].text
-                
-                if input != nil && !input!.isEmpty{
-                    
-                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
-                    newGame.name = input
-                    
-                }
-                
-            })
-            
+            CoreDataManager.sharedInstance.stressTest()
         }
         
-        let cancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
-        
-        alert.addAction(add)
-        alert.addAction(cancel)
-        alert.addTextFieldWithConfigurationHandler(nil)
-        presentViewController(alert, animated: true, completion: nil)
+
         
         
     }
@@ -110,6 +139,8 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
     
     
     func controllerWillChangeContent(controller: NSFetchedResultsController){
+        
+
         
         tableView.beginUpdates()
         
@@ -146,6 +177,6 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate {
       tableView.endUpdates()
         
     }
-    
+
     
 }

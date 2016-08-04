@@ -12,10 +12,10 @@ import CoreData
 
 class CoreDataManager{
     
-    enum TransactionType {
-        case Write
-        case Read
-        case None
+    enum TransactionType: String {
+        case Write = "WRITE"
+        case Read = "READ"
+        case None = "NONE"
     }
     
     
@@ -38,6 +38,14 @@ class CoreDataManager{
         
         let queue = NSOperationQueue()
         queue.maxConcurrentOperationCount = 5
+        return queue
+        
+    }()
+    
+    lazy private var stressQueue: NSOperationQueue = {
+        
+        let queue = NSOperationQueue()
+        queue.maxConcurrentOperationCount = 20
         return queue
         
     }()
@@ -71,6 +79,122 @@ class CoreDataManager{
     }
     
     
+    func stressTest (){
+        
+        
+        enum OperationType: Int {
+            case Read = 0
+            case Write
+            case Delete
+ 
+        }
+        
+        
+        let readBlock: () -> Void = { [unowned self] in
+            
+            self.coordinateReading(identifier: "ReadBlock"){ (context) in
+                
+                let request = NSFetchRequest(entityName: "Game")
+                let games = try! context.executeFetchRequest(request)
+                
+                for item in games {
+                    
+                    let game = item as! Game
+                     _ = game.name
+                    
+                }
+                
+            }
+            
+        }
+        
+        let writeBlock: () -> Void = { [unowned self] in
+            
+            self.coordinateWriting(identifier: "WriteBlock") { (context) in
+                
+                for _ in 0..<20 {
+                    
+                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
+                    newGame.name = self.randomStringWithLength(8) as String
+                    
+                    
+                }
+                
+                
+            }
+            
+        }
+        
+        let deleteBlock: () -> Void = { [unowned self] in
+            
+            
+            self.coordinateWriting(identifier: "DeleteBlock", block: { (context) in
+                
+                let request = NSFetchRequest(entityName: "Game")
+                let results = try! context.executeFetchRequest(request)
+                
+                let index = Int(arc4random_uniform(UInt32(results.count)))
+                
+                for _ in 0..<index {
+                    
+                    let game = results [index] as! Game
+                    context.deleteObject(game)
+                }
+                
+                
+            })
+            
+        }
+        
+        while true {
+            
+            let operation = NSBlockOperation(block: { 
+                
+                let operationType = OperationType(rawValue: Int(arc4random_uniform(3)))
+                
+                
+                switch operationType!{
+                    
+                case .Write:
+                    writeBlock()
+                    
+                case .Read:
+                    
+                    for _ in 0...4 {
+                        
+                        
+                        readBlock()
+                        
+                        
+                    }
+                    
+
+                    
+                case .Delete:
+                    
+                    deleteBlock()
+   
+                    
+                }
+                
+            })
+            
+            if stressQueue.operationCount < stressQueue.maxConcurrentOperationCount {
+                stressQueue.addOperation(operation)
+            }
+            
+            while stressQueue.operationCount > coreDataQueue.maxConcurrentOperationCount {
+                NSThread.sleepForTimeInterval(0.5)
+            }
+            
+        }
+        
+        
+        
+        
+    }
+    
+    
     // MARK: Private
     
     private func serializeTransaction (type type: TransactionType, identifier: String, block: (NSManagedObjectContext) -> Void){
@@ -79,12 +203,16 @@ class CoreDataManager{
         let incoming = CoreDataOperation { [unowned self] in
             
             
+            print("Operation of type: \(type.rawValue) with identifier: \(identifier) starting!!!")
+            
             // Get a background context for the calling thread
             let context = self.backgroundContext()
             
             
             // This is additional safety, enqueue the block on the context's internal queue (could be redundent)
             context.performBlockAndWait{[unowned context] in
+                
+                
                 
                 // execute the block with the context as param
                 block(context)
@@ -121,6 +249,8 @@ class CoreDataManager{
                     
                 }
             }
+            
+            print("Operation of type: \(type.rawValue) with identifier: \(identifier) ending!!!")
         }
         
         
@@ -171,13 +301,32 @@ class CoreDataManager{
         
     }
     
-    func synced(lock: AnyObject, closure: () -> ()) {
+    // MARK: // Helpers
+    
+    private func synced(lock: AnyObject, closure: () -> ()) {
         
         defer { objc_sync_exit(lock) }
         objc_sync_enter(lock)
         closure()
     }
     
+    
+    
+    
+    private func randomStringWithLength (len : Int) -> NSString {
+        
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        
+        let randomString : NSMutableString = NSMutableString(capacity: len)
+        
+        for _ in 0..<len{
+            let length = UInt32 (letters.length)
+            let rand = arc4random_uniform(length)
+            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+        }
+        
+        return randomString
+    }
     
     
     // MARK: Boilerplate
