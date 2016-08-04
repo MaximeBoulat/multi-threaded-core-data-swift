@@ -202,7 +202,16 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
         
         let sb = UIStoryboard(name: "Main", bundle: nil)
         let emptyVC = sb.instantiateViewControllerWithIdentifier("EmptyVC")
-        splitViewController?.showDetailViewController(emptyVC, sender: self)
+        
+        if splitViewController?.collapsed == true
+        {
+            navigationController?.popToRootViewControllerAnimated(true)
+            
+        } else {
+            
+            splitViewController?.showDetailViewController(emptyVC, sender: self)
+        }
+
         
     }
     
