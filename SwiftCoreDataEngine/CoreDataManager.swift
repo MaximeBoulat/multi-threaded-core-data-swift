@@ -120,9 +120,7 @@ class CoreDataManager{
                     
                 }
                 
-                
             }
-            
         }
         
         let deleteBlock: () -> Void = { [unowned self] in
@@ -133,11 +131,14 @@ class CoreDataManager{
                 let request = NSFetchRequest(entityName: "Game")
                 let results = try! context.executeFetchRequest(request)
                 
+           
+                
                 let index = Int(arc4random_uniform(UInt32(results.count)))
                 
-                for _ in 0..<index {
+                
+                for i in 0..<index {
                     
-                    let game = results [index] as! Game
+                    let game = results [i] as! Game
                     context.deleteObject(game)
                 }
                 
@@ -203,7 +204,7 @@ class CoreDataManager{
         let incoming = CoreDataOperation { [unowned self] in
             
             
-            print("Operation of type: \(type.rawValue) with identifier: \(identifier) starting!!!")
+//            print("Operation of type: \(type.rawValue) with identifier: \(identifier) starting!!!")
             
             // Get a background context for the calling thread
             let context = self.backgroundContext()
@@ -250,7 +251,7 @@ class CoreDataManager{
                 }
             }
             
-            print("Operation of type: \(type.rawValue) with identifier: \(identifier) ending!!!")
+//            print("Operation of type: \(type.rawValue) with identifier: \(identifier) ending!!!")
         }
         
         
