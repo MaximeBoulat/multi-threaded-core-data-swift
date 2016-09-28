@@ -17,9 +17,9 @@ class CoreDataManager{
     var stressing = false
     
     
-    lazy private var coreDataQueue: NSOperationQueue = {
+    lazy fileprivate var coreDataQueue: OperationQueue = {
         
-        let queue = NSOperationQueue()
+        let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 20
         return queue
         
@@ -33,7 +33,7 @@ class CoreDataManager{
     }
     
     
-    class CoreDataOperation: NSBlockOperation{
+    class CoreDataOperation: BlockOperation{
         
         var type: TransactionType = .None
         var identifier: String = ""
@@ -47,7 +47,7 @@ class CoreDataManager{
         
         print("CoreDataManager initializing")
         
-        let managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
         mainThreadContext = managedObjectContext
        
@@ -56,14 +56,14 @@ class CoreDataManager{
     // MARK: Public
     
     
-    func coordinateReading(identifier identifier: String, block: (NSManagedObjectContext) -> Void){
+    func coordinateReading(identifier: String, block: @escaping (NSManagedObjectContext) -> Void){
         
         serializeTransaction(type: .Read, identifier: identifier, block: block)
         
     }
     
     
-    func coordinateWriting(identifier identifier: String, block: (NSManagedObjectContext) -> Void){
+    func coordinateWriting(identifier: String, block: @escaping (NSManagedObjectContext) -> Void){
         
          serializeTransaction(type: .Write, identifier: identifier, block: block)
         
@@ -74,9 +74,9 @@ class CoreDataManager{
         
         
         enum OperationType: Int {
-            case Read = 0
-            case Write
-            case Delete
+            case read = 0
+            case write
+            case delete
             
         }
         
@@ -85,12 +85,12 @@ class CoreDataManager{
             
             self.coordinateReading(identifier: "ReadBlock"){ (context) in
                 
-                let request = NSFetchRequest(entityName: "Game")
-                let games = try! context.executeFetchRequest(request)
+                let request = NSFetchRequest<Game>(entityName: "Game")
+                let games = try! context.fetch(request)
                 
                 for item in games {
                     
-                    let game = item as! Game
+                    let game = item
                     _ = game.name
                     
                 }
@@ -105,7 +105,7 @@ class CoreDataManager{
                 
                 for _ in 0..<20 {
                     
-                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
+                    let newGame = NSEntityDescription.insertNewObject(forEntityName: "Game", into: context) as! Game
                     newGame.name = self.randomStringWithLength(8) as String
                     
                     
@@ -119,15 +119,15 @@ class CoreDataManager{
             
             self.coordinateWriting(identifier: "DeleteBlock", block: { (context) in
                 
-                let request = NSFetchRequest(entityName: "Game")
-                let results = try! context.executeFetchRequest(request)
+                let request = NSFetchRequest<Game>(entityName: "Game")
+                let results = try! context.fetch(request)
                 let index = Int(arc4random_uniform(UInt32(results.count)))
                 
                 
                 for i in 0..<index {
                     
-                    let game = results [i] as! Game
-                    context.deleteObject(game)
+                    let game = results [i]
+                    context.delete(game)
                 }
                 
                 
@@ -141,10 +141,10 @@ class CoreDataManager{
             
             switch OperationType(rawValue: Int(arc4random_uniform(3)))!{
                 
-            case .Write:
+            case .write:
                 writeBlock()
                 
-            case .Read:
+            case .read:
                 
                 for _ in 0...4 {
                     
@@ -156,7 +156,7 @@ class CoreDataManager{
                 
                 
                 
-            case .Delete:
+            case .delete:
                 
                 deleteBlock()
                 
@@ -166,7 +166,7 @@ class CoreDataManager{
             
             if coreDataQueue.operationCount > coreDataQueue.maxConcurrentOperationCount {
                 
-                NSThread.sleepForTimeInterval(0.1)
+                Thread.sleep(forTimeInterval: 0.1)
             }
             
             
@@ -184,7 +184,7 @@ class CoreDataManager{
     
     // MARK: Private
     
-    private func serializeTransaction (type type: TransactionType, identifier: String, block: (NSManagedObjectContext) -> Void){
+    fileprivate func serializeTransaction (type: TransactionType, identifier: String, block: @escaping (NSManagedObjectContext) -> Void){
         
         
         let incoming = CoreDataOperation { [unowned self] in
@@ -197,7 +197,7 @@ class CoreDataManager{
             
             
             // This is additional safety, enqueue the block on the context's internal queue (could be redundent)
-            context.performBlockAndWait{[unowned context] in
+            context.performAndWait{[unowned context] in
                 
                 
                 
@@ -215,9 +215,9 @@ class CoreDataManager{
                      
                      */
                     
-                    let parentContext = context.parentContext!
+                    let parentContext = context.parent!
                     
-                    context.parentContext?.performBlockAndWait{ [unowned parentContext] in
+                    context.parent?.performAndWait{ [unowned parentContext] in
                         
                         do{
                             try parentContext.save()
@@ -280,17 +280,17 @@ class CoreDataManager{
     }
     
     
-    private func backgroundContext() -> NSManagedObjectContext{
+    fileprivate func backgroundContext() -> NSManagedObjectContext{
         
-        let context = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-        context.parentContext = mainThreadContext
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.parent = mainThreadContext
         return context
         
     }
     
     // MARK: // Helpers
     
-    private func synced(lock: AnyObject, closure: () -> ()) {
+    fileprivate func synced(_ lock: AnyObject, closure: () -> ()) {
         
         defer { objc_sync_exit(lock) }
         objc_sync_enter(lock)
@@ -300,7 +300,7 @@ class CoreDataManager{
     
     
     
-    private func randomStringWithLength (len : Int) -> NSString {
+    fileprivate func randomStringWithLength (_ len : Int) -> NSString {
         
         let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         
@@ -309,7 +309,7 @@ class CoreDataManager{
         for _ in 0..<len{
             let length = UInt32 (letters.length)
             let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+            randomString.appendFormat("%C", letters.character(at: Int(rand)))
         }
         
         return randomString
@@ -318,31 +318,31 @@ class CoreDataManager{
     
     // MARK: Boilerplate
     
-    lazy var applicationDocumentsDirectory: NSURL = {
+    lazy var applicationDocumentsDirectory: URL = {
 
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return urls[urls.count-1]
     }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("Model", withExtension: "momd")!
-        return NSManagedObjectModel(contentsOfURL: modelURL)!
+        let modelURL = Bundle.main.url(forResource: "Model", withExtension: "momd")!
+        return NSManagedObjectModel(contentsOf: modelURL)!
     }()
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
         // The persistent store coordinator for the application. This implementation creates and returns a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SingleViewCoreData.sqlite")
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("SingleViewCoreData.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
-            try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
         } catch {
             // Report any error we got.
             var dict = [String: AnyObject]()
-            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-            dict[NSLocalizedFailureReasonErrorKey] = failureReason
+            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data" as AnyObject?
+            dict[NSLocalizedFailureReasonErrorKey] = failureReason as AnyObject?
             
             dict[NSUnderlyingErrorKey] = error as NSError
             let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)

@@ -13,7 +13,7 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     
     
     
-    let games: NSFetchedResultsController
+    let games: NSFetchedResultsController<Game>
     
     
     // MARK: Lifecycle
@@ -22,7 +22,7 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     
     required init?(coder aDecoder: NSCoder) {
         
-        let request = NSFetchRequest(entityName: "Game")
+        let request = NSFetchRequest<Game>(entityName: "Game")
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         games = NSFetchedResultsController(fetchRequest: request, managedObjectContext: CoreDataManager.sharedInstance.mainThreadContext!, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -48,39 +48,39 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     
     // MARK: Tableview
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return games.fetchedObjects!.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
-        let game = games.fetchedObjects![indexPath.row] as! Game
+        let game = games.fetchedObjects![indexPath.row]
         cell.textLabel?.text = game.name
         
         return cell
     }
     
-    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         
-        return .Delete
+        return .delete
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
-        let game = games.fetchedObjects![indexPath.row]
+        let game = games.fetchedObjects![(indexPath as NSIndexPath).row]
         let objectId = game.objectID
         
         CoreDataManager.sharedInstance.coordinateWriting(identifier: "GameDelete") { (context) in
             
             do{
                 
-                let corresponding = try context.existingObjectWithID(objectId) as! Game
-                context.deleteObject(corresponding)
+                let corresponding = try context.existingObject(with: objectId) as! Game
+                context.delete(corresponding)
                 
             } catch {
                 
@@ -90,12 +90,12 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let game = games.fetchedObjects![indexPath.row] as! Game
+        let game = games.fetchedObjects![indexPath.row]
         
         let sb = UIStoryboard(name: "Main", bundle: nil)
-        let detailNav = sb.instantiateViewControllerWithIdentifier("DetailNav") as! UINavigationController
+        let detailNav = sb.instantiateViewController(withIdentifier: "DetailNav") as! UINavigationController
         let detailVC = detailNav.viewControllers[0] as! DetailTableVC
         detailVC.game = game
         detailVC.delegate = self
@@ -109,11 +109,11 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     // MARK: Actions
     
     
-    @IBAction func didPressPlus(sender: AnyObject) {
+    @IBAction func didPressPlus(_ sender: AnyObject) {
         
         
-        let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .Alert)
-        let add = UIAlertAction(title: "Add", style: .Default) {(action) in
+        let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .alert)
+        let add = UIAlertAction(title: "Add", style: .default) {(action) in
             
             CoreDataManager.sharedInstance.coordinateWriting(identifier: "InsertGame", block: { (context) in
                 
@@ -121,7 +121,7 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
                 
                 if input != nil && !input!.isEmpty{
                     
-                    let newGame = NSEntityDescription.insertNewObjectForEntityForName("Game", inManagedObjectContext: context) as! Game
+                    let newGame = NSEntityDescription.insertNewObject(forEntityName: "Game", into: context) as! Game
                     newGame.name = input
                     
                 }
@@ -130,33 +130,32 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
             
         }
         
-        let cancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         alert.addAction(add)
         alert.addAction(cancel)
-        alert.addTextFieldWithConfigurationHandler(nil)
-        presentViewController(alert, animated: true, completion: nil)
+        alert.addTextField(configurationHandler: nil)
+        present(alert, animated: true, completion: nil)
     }
     
     
     
-    @IBAction func didPressPlay(sender: AnyObject) {
-        
-        CoreDataManager.sharedInstance.stressing = !CoreDataManager.sharedInstance.stressing
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            
-            CoreDataManager.sharedInstance.stressTest()
-        }
-        
+	@IBAction func didPressPlay(_ sender: AnyObject) {
+		
+		CoreDataManager.sharedInstance.stressing = !CoreDataManager.sharedInstance.stressing
+		
+		DispatchQueue.global().async {
+			CoreDataManager.sharedInstance.stressTest()
+		}
+		
     }
-  
-    
+	
+	
     // MARK: FetchedResultsController protocol
     
     
     
-    func controllerWillChangeContent(controller: NSFetchedResultsController){
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>){
         
 
         
@@ -165,21 +164,21 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     }
     
     
-    func controller(controller: NSFetchedResultsController,
-                    didChangeObject anObject: AnyObject,
-                                    atIndexPath indexPath: NSIndexPath?,
-                                                forChangeType type: NSFetchedResultsChangeType,
-                                                              newIndexPath: NSIndexPath?){
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
+                    didChange anObject: Any,
+                                    at indexPath: IndexPath?,
+                                                for type: NSFetchedResultsChangeType,
+                                                              newIndexPath: IndexPath?){
         
         
         switch type {
-        case .Insert:
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
-        case .Delete:
-            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
-        case .Move:
-            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+        case .insert:
+            tableView.insertRows(at: [newIndexPath!], with: .automatic)
+        case .delete:
+            tableView.deleteRows(at: [indexPath!], with: .automatic)
+        case .move:
+            tableView.deleteRows(at: [indexPath!], with: .automatic)
+            tableView.insertRows(at: [newIndexPath!], with: .automatic)
         default:
             break
         }
@@ -190,7 +189,7 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     }
     
     
-    func controllerDidChangeContent(controller: NSFetchedResultsController){
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>){
         
       tableView.endUpdates()
         
@@ -198,14 +197,14 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
 
      // MARK: DetailVCProtocol protocol
     
-    func dismissDetail (detail: DetailTableVC){
+    func dismissDetail (_ detail: DetailTableVC){
         
         let sb = UIStoryboard(name: "Main", bundle: nil)
-        let emptyVC = sb.instantiateViewControllerWithIdentifier("EmptyVC")
+        let emptyVC = sb.instantiateViewController(withIdentifier: "EmptyVC")
         
-        if splitViewController?.collapsed == true
+        if splitViewController?.isCollapsed == true
         {
-            navigationController?.popToRootViewControllerAnimated(true)
+            _ = navigationController?.popToRootViewController(animated: true)
             
         } else {
             
