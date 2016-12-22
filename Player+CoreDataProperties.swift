@@ -16,5 +16,4 @@ extension Player {
 
     @NSManaged var screenName: String?
     @NSManaged var game: Game?
-
 }

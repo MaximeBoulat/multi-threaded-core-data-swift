@@ -10,40 +10,25 @@ import UIKit
 import CoreData
 
 class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, DetailVCProtocol {
-    
-    
-    
+	
     let games: NSFetchedResultsController<Game>
-    
     
     // MARK: Lifecycle
     
-    
-    
     required init?(coder aDecoder: NSCoder) {
-        
         let request = NSFetchRequest<Game>(entityName: "Game")
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         games = NSFetchedResultsController(fetchRequest: request, managedObjectContext: CoreDataManager.sharedInstance.mainThreadContext!, sectionNameKeyPath: nil, cacheName: nil)
-        
-        
         try! games.performFetch()
         
-        
         super.init(coder: aDecoder)
-        
         games.delegate = self
-        
-        
-        
     }
     
-    
     override func viewDidLoad() {
-        
         super.viewDidLoad()
+		
         title = "Games"
-        
     }
     
     // MARK: Tableview
@@ -53,7 +38,7 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return games.fetchedObjects!.count
+        return self.games.fetchedObjects!.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

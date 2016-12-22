@@ -12,18 +12,13 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
-
-    
+	
     // MARK: - Lifecycle
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
         let splitViewController = self.window!.rootViewController as! UISplitViewController
-        
         splitViewController.preferredDisplayMode = .allVisible
         splitViewController.delegate = self
-        
-        
         _ = CoreDataManager.sharedInstance
         
         // Override point for customization after application launch.
@@ -50,44 +45,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-    
-    
-    // MARK: - Split view
-    
-    // for collapsing
-    
-    //    func primaryViewControllerForCollapsingSplitViewController(splitViewController: UISplitViewController) -> UIViewController? {
-    //
-    //        return splitViewController.viewControllers[0]
-    //
-    //    }
-    
+    } 
+	
+	// MARK: - Split view
+	
+	// for collapsing
+	
+//	func primaryViewControllerForCollapsingSplitViewController(splitViewController: UISplitViewController) -> UIViewController? {
+//		return splitViewController.viewControllers[0]
+//	}
+	
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-        
         //Return false to stop collapsing - i.e. let the split view controller try and incorporate the secondary view controller’s content into the collapsed interface
         //Return true to allow to collapse fully (do not try and incorporate detail in master)
-        
         return true
-    }
-    
-    
-    
-    // for expanding
-    
-    //    func primaryViewControllerForExpandingSplitViewController(splitViewController: UISplitViewController) -> UIViewController? {
-    //
-    //        return splitViewController.viewControllers[0]
-    //    }
-    
-    
+	}
+	
+	// for expanding
+	
+//	func primaryViewControllerForExpandingSplitViewController(splitViewController: UISplitViewController) -> UIViewController? {
+//		return splitViewController.viewControllers[0]
+//	}
+	
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-        
         return nil
-        
     }
-
-
-
 }
-
