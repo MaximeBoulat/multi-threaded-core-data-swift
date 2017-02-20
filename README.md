@@ -7,7 +7,7 @@ This project demonstrates  two things:
 *	Concurrency across threads, and how to throttle a high volume of concurrent, possibly conflictual core data transactions using a queue and dependencies.
 
 
-The project features a simple drill-down navigation which allows to populate three levels of a data hierarchy:
+The project features a simple drill-down navigation which allows to populate two levels of a data hierarchy:
 Games -> Players.
 
 The database transactions are dispatched off the main thread using the following APIs:
