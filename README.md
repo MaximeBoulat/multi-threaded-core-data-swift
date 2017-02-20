@@ -1,6 +1,3 @@
-# multi-threaded-core-data-swift
-This is the thread safe core data pipeline in swift
-
 # multi-threaded-core-data
 This is an example of a thread-safe, serialized, core data transaction pipeline supporting a purely data driven interface through the use of NSFetchedResultsControllers.
 
