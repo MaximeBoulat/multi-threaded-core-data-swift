@@ -63,14 +63,11 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
         CoreDataManager.sharedInstance.coordinateWriting(identifier: "GameDelete") { (context) in
             
             do{
-                
                 let corresponding = try context.existingObject(with: objectId) as! Game
                 context.delete(corresponding)
                 
             } catch {
-                
                 print("Could not find corresponding Game object")
-                
             }
         }
     }
@@ -86,8 +83,6 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
         detailVC.delegate = self
         
         splitViewController?.showDetailViewController(detailNav, sender: self)
-        
-        
     }
     
     
@@ -95,24 +90,20 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     
     
     @IBAction func didPressPlus(_ sender: AnyObject) {
-        
-        
+		
         let alert = UIAlertController(title: nil, message: "Add a game", preferredStyle: .alert)
         let add = UIAlertAction(title: "Add", style: .default) {(action) in
             
             CoreDataManager.sharedInstance.coordinateWriting(identifier: "InsertGame", block: { (context) in
-                
+			
                 let input = alert.textFields![0].text
-                
+			
                 if input != nil && !input!.isEmpty{
-                    
                     let newGame = NSEntityDescription.insertNewObject(forEntityName: "Game", into: context) as! Game
                     newGame.name = input
-                    
                 }
                 
             })
-            
         }
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -132,7 +123,6 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
 		DispatchQueue.global().async {
 			CoreDataManager.sharedInstance.stressTest()
 		}
-		
     }
 	
 	
@@ -141,19 +131,15 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
     
     
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>){
-        
-
-        
         tableView.beginUpdates()
-        
     }
     
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
                     didChange anObject: Any,
-                                    at indexPath: IndexPath?,
-                                                for type: NSFetchedResultsChangeType,
-                                                              newIndexPath: IndexPath?){
+                    at indexPath: IndexPath?,
+                    for type: NSFetchedResultsChangeType,
+                    newIndexPath: IndexPath?){
         
         
         switch type {
@@ -167,17 +153,11 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
         default:
             break
         }
-        
-        
-        
-        
     }
     
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>){
-        
       tableView.endUpdates()
-        
     }
 
      // MARK: DetailVCProtocol protocol
@@ -190,14 +170,9 @@ class MasterTableVC: UITableViewController, NSFetchedResultsControllerDelegate, 
         if splitViewController?.isCollapsed == true
         {
             _ = navigationController?.popToRootViewController(animated: true)
-            
         } else {
-            
             splitViewController?.showDetailViewController(emptyVC, sender: self)
         }
-
-        
     }
-    
-    
+
 }
