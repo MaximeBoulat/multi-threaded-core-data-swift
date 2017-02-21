@@ -24,7 +24,7 @@ func coordinateReading(identifier: String, block: @escaping (NSManagedObjectCont
 
 
 ### Serializing conflictual operations
-These APIs enqueue blocks into a private queue and enforces dependencies between “destructive” (write) operations and “non-destructive”(read) operations. The writes are not allowed to evaluate concurrently to any other type of operation, while the reads are allowed to evaluate concurrently with each other. 
+These APIs enqueue blocks into a private queue and enforce dependencies between “destructive” (write) operations and “non-destructive”(read) operations. The writes are not allowed to evaluate concurrently to any other type of operation, while the reads are allowed to evaluate concurrently with each other. 
 
 ### Hierarchy of contexts
 This solution provides thread safety by spawning child contexts on demand. When a block is evaluated, it acquires a child context from the main thread context. Once the block has evaluated, and before the next operation starts, the changes are saved all the way up the context hierarchy, ensuring that the next operation’s context is not outdated. 
